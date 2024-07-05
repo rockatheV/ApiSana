@@ -1,0 +1,295 @@
+
+USE [master]
+GO
+/** Object:  Database [apiBookDb]    Script Date: 28/06/2024 10:12:11 p. m. **/
+CREATE DATABASE [apiBookDb]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'apiBookDb', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.SQLEXPRESS\MSSQL\DATA\apiBookDb.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'apiBookDb_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.SQLEXPRESS\MSSQL\DATA\apiBookDb_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [apiBookDb] SET COMPATIBILITY_LEVEL = 160
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [apiBookDb].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [apiBookDb] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [apiBookDb] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [apiBookDb] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [apiBookDb] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [apiBookDb] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [apiBookDb] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [apiBookDb] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [apiBookDb] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [apiBookDb] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [apiBookDb] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [apiBookDb] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [apiBookDb] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [apiBookDb] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [apiBookDb] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [apiBookDb] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [apiBookDb] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [apiBookDb] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [apiBookDb] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [apiBookDb] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [apiBookDb] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [apiBookDb] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [apiBookDb] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [apiBookDb] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [apiBookDb] SET  MULTI_USER 
+GO
+ALTER DATABASE [apiBookDb] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [apiBookDb] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [apiBookDb] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [apiBookDb] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [apiBookDb] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [apiBookDb] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+ALTER DATABASE [apiBookDb] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [apiBookDb] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
+USE [apiBookDb]
+GO
+/** Object:  Table [dbo].[__EFMigrationsHistory]    Script Date: 28/06/2024 10:12:11 p. m. **/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[__EFMigrationsHistory](
+	[MigrationId] [nvarchar](150) NOT NULL,
+	[ProductVersion] [nvarchar](32) NOT NULL,
+ CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY CLUSTERED 
+(
+	[MigrationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/** Object:  Table [dbo].[Books]    Script Date: 28/06/2024 10:12:11 p. m. **/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Books](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](max) NOT NULL,
+	[Author] [nvarchar](max) NOT NULL,
+	[Price] [decimal](18, 2) NOT NULL,
+	[PublicationDate] [datetime2](7) NOT NULL,
+ CONSTRAINT [PK_Books] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/** Object:  Table [dbo].[OrderDetails]    Script Date: 28/06/2024 10:12:11 p. m. **/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[OrderDetails](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[IdOrder] [int] NOT NULL,
+	[IdBook] [int] NOT NULL,
+	[Amount] [int] NOT NULL,
+	[Price] [decimal](18, 2) NOT NULL,
+ CONSTRAINT [PK_OrderDetails] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/** Object:  Table [dbo].[Orders]    Script Date: 28/06/2024 10:12:11 p. m. **/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Orders](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[FechaPedido] [datetime2](7) NOT NULL,
+	[IdUser] [int] NOT NULL,
+ CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/** Object:  Table [dbo].[User]    Script Date: 28/06/2024 10:12:11 p. m. **/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[User](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[Email] [nvarchar](450) NOT NULL,
+ CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+INSERT [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES (N'20240626032209_firstmigration', N'7.0.15')
+GO
+SET IDENTITY_INSERT [dbo].[Books] ON 
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (1, N'The Great Gatsby', N'F. Scott Fitzgerald', CAST(15.99 AS Decimal(18, 2)), CAST(N'1925-04-10T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (2, N'To Kill a Mockingbird', N'Harper Lee', CAST(12.50 AS Decimal(18, 2)), CAST(N'1960-07-11T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (3, N'1984', N'George Orwell', CAST(10.99 AS Decimal(18, 2)), CAST(N'1949-06-08T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (4, N'Pride and Prejudice', N'Jane Austen', CAST(9.95 AS Decimal(18, 2)), CAST(N'1813-01-28T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (5, N'The Catcher in the Rye', N'J.D. Salinger', CAST(11.25 AS Decimal(18, 2)), CAST(N'1951-07-16T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (6, N'Moby-Dick', N'Herman Melville', CAST(14.75 AS Decimal(18, 2)), CAST(N'1851-10-18T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (7, N'The Lord of the Rings', N'J.R.R. Tolkien', CAST(29.99 AS Decimal(18, 2)), CAST(N'1954-07-29T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (8, N'Harry Potter and the Philosopher''s Stone', N'J.K. Rowling', CAST(19.95 AS Decimal(18, 2)), CAST(N'1997-06-26T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (9, N'The Hobbit', N'J.R.R. Tolkien', CAST(18.50 AS Decimal(18, 2)), CAST(N'1937-09-21T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (10, N'The Hitchhiker''s Guide to the Galaxy', N'Douglas Adams', CAST(8.99 AS Decimal(18, 2)), CAST(N'1979-10-12T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Books] ([Id], [Title], [Author], [Price], [PublicationDate]) VALUES (1002, N'Prueba 1', N'Joao cancelo', CAST(19877.00 AS Decimal(18, 2)), CAST(N'2000-02-01T00:00:00.0000000' AS DateTime2))
+GO
+SET IDENTITY_INSERT [dbo].[Books] OFF
+GO
+SET IDENTITY_INSERT [dbo].[OrderDetails] ON 
+GO
+INSERT [dbo].[OrderDetails] ([Id], [IdOrder], [IdBook], [Amount], [Price]) VALUES (1, 3, 3, 5004, CAST(5000043.96 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[OrderDetails] ([Id], [IdOrder], [IdBook], [Amount], [Price]) VALUES (2, 3, 9, 101, CAST(612012.38 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[OrderDetails] ([Id], [IdOrder], [IdBook], [Amount], [Price]) VALUES (1002, 3, 6, 89, CAST(1312.75 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[OrderDetails] ([Id], [IdOrder], [IdBook], [Amount], [Price]) VALUES (1003, 3, 1002, 125, CAST(2484625.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[OrderDetails] ([Id], [IdOrder], [IdBook], [Amount], [Price]) VALUES (1004, 3, 8, 12, CAST(239.40 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[OrderDetails] ([Id], [IdOrder], [IdBook], [Amount], [Price]) VALUES (1005, 1003, 6, 200, CAST(2950.00 AS Decimal(18, 2)))
+GO
+SET IDENTITY_INSERT [dbo].[OrderDetails] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Orders] ON 
+GO
+INSERT [dbo].[Orders] ([Id], [FechaPedido], [IdUser]) VALUES (1, CAST(N'2024-06-27T00:00:00.0000000' AS DateTime2), 1)
+GO
+INSERT [dbo].[Orders] ([Id], [FechaPedido], [IdUser]) VALUES (2, CAST(N'2024-06-25T00:00:00.0000000' AS DateTime2), 1)
+GO
+INSERT [dbo].[Orders] ([Id], [FechaPedido], [IdUser]) VALUES (3, CAST(N'2024-06-26T00:00:00.0000000' AS DateTime2), 1)
+GO
+INSERT [dbo].[Orders] ([Id], [FechaPedido], [IdUser]) VALUES (1002, CAST(N'2024-06-28T16:31:59.1288407' AS DateTime2), 1)
+GO
+INSERT [dbo].[Orders] ([Id], [FechaPedido], [IdUser]) VALUES (1003, CAST(N'2024-06-28T16:34:40.6649529' AS DateTime2), 2)
+GO
+SET IDENTITY_INSERT [dbo].[Orders] OFF
+GO
+SET IDENTITY_INSERT [dbo].[User] ON 
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (1, N'John Doe', N'john.doe@example.com')
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (2, N'Jane Smith', N'jane.smith@example.com')
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (3, N'Michael Johnson', N'michael.johnson@example.com')
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (4, N'Emily Davis', N'emily.davis@example.com')
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (5, N'Robert Brown', N'robert.brown@example.com')
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (6, N'Sarah Wilson', N'sarah.wilson@example.com')
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (7, N'William Martinez', N'william.martinez@example.com')
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (8, N'Emma Garcia', N'emma.garcia@example.com')
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (9, N'David Rodriguez', N'david.rodriguez@example.com')
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (10, N'Olivia Lopez', N'olivia.lopez@example.com')
+GO
+INSERT [dbo].[User] ([Id], [Name], [Email]) VALUES (1002, N'Caballerito', N'Caballero@Gaucho.com')
+GO
+SET IDENTITY_INSERT [dbo].[User] OFF
+GO
+/** Object:  Index [IX_OrderDetails_IdBook]    Script Date: 28/06/2024 10:12:11 p. m. **/
+CREATE NONCLUSTERED INDEX [IX_OrderDetails_IdBook] ON [dbo].[OrderDetails]
+(
+	[IdBook] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/** Object:  Index [IX_OrderDetails_IdOrder]    Script Date: 28/06/2024 10:12:11 p. m. **/
+CREATE NONCLUSTERED INDEX [IX_OrderDetails_IdOrder] ON [dbo].[OrderDetails]
+(
+	[IdOrder] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/** Object:  Index [IX_Orders_IdUser]    Script Date: 28/06/2024 10:12:11 p. m. **/
+CREATE NONCLUSTERED INDEX [IX_Orders_IdUser] ON [dbo].[Orders]
+(
+	[IdUser] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/** Object:  Index [IX_User_Email]    Script Date: 28/06/2024 10:12:11 p. m. **/
+CREATE UNIQUE NONCLUSTERED INDEX [IX_User_Email] ON [dbo].[User]
+(
+	[Email] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[OrderDetails]  WITH CHECK ADD  CONSTRAINT [FK_OrderDetails_Books_IdBook] FOREIGN KEY([IdBook])
+REFERENCES [dbo].[Books] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[OrderDetails] CHECK CONSTRAINT [FK_OrderDetails_Books_IdBook]
+GO
+ALTER TABLE [dbo].[OrderDetails]  WITH CHECK ADD  CONSTRAINT [FK_OrderDetails_Orders_IdOrder] FOREIGN KEY([IdOrder])
+REFERENCES [dbo].[Orders] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[OrderDetails] CHECK CONSTRAINT [FK_OrderDetails_Orders_IdOrder]
+GO
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [FK_Orders_User_IdUser] FOREIGN KEY([IdUser])
+REFERENCES [dbo].[User] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [FK_Orders_User_IdUser]
+GO
+USE [master]
+GO
+ALTER DATABASE [apiBookDb] SET  READ_WRITE 
+GO
